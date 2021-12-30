@@ -65,10 +65,9 @@ struct {
 
 static struct Ringbuffer usart1tx;
 
-void                     USART1_IRQ_Handler(void) { usart_irq_handler(&USART1, &usart1tx); }
-size_t            u1puts(const char* buf, size_t len) { return usart_puts(&USART1, &usart1tx, buf, len); }
-
-static size_t            usb_puts(const char* buf, size_t len) { return usb_send(buf, len); }
+void          USART1_IRQ_Handler(void) { usart_irq_handler(&USART1, &usart1tx); }
+static size_t u1puts(const char* buf, size_t len) { return usart_puts(&USART1, &usart1tx, buf, len); }
+static size_t usb_puts(const char* buf, size_t len) { return usb_send(buf, len); }
 
 
 void USB_LP_CAN1_RX0_IRQ_Handler(void) {

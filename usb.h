@@ -5,11 +5,16 @@
 	endpoint 0x1/0x81 with bidirectional bulk transfers, with a buffer
 	size of 64 bytes in both directions. 
 
-	The device has VID 0483 (STMicroelectronics) and PID 5722 (Bulk Demo).
+	By sending a slightly bigger descriptor, this shows up as a CDC/ACM device
+	aka a serial port, under MacOS and (hopefully) Linux without the need for extra drivers.
+	No form of line control, baud rate, parity etc setting is implemented, you just get
+	the full USB bandwith to/from your microcontroller with the abi defined in usb.h
 
-   This implementation only uses the USB_LP_CAN_RX0_IRQn interrupt.
+	The device has VID 0483 (STMicroelectronics) and PID 5740 (Virtual Com Port).
 
-   The low level driver requires the following entries in the linker script:
+	This implementation only uses the USB_LP_CAN_RX0_IRQn interrupt.
+
+	The low level driver requires the following entries in the linker script:
 
        USB     = 0x40005C00
        USB_PMA = 0x40006000

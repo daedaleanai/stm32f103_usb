@@ -1,12 +1,10 @@
-#include "usb.h"
-#include "stm32f103usb.h"
-
 //
 //  TODO; 
 //    proper suspend/wakeup detection
-//    
+//    string descriptors?
 //
-
+#include "usb.h"
+#include "stm32f103usb.h"
 
 #if 0
 #include "printf.h"
