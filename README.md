@@ -9,6 +9,7 @@ has no dependencies on outside code.
 Features:
 - entirely plain C, no assembly
 - customized header declares all devices as true structures, with their absolute addresses provided in the linker script.
+- no #defines or conditional compilations.  All constants are enums. 
 - compact printf implementation based on stb_printf, which can be used with any device for which you provide a puts() function.
 - extremely small usb stack (1.7k) providing a serial port compatible with most operating systems
 
