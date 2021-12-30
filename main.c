@@ -9,7 +9,7 @@
 #include "usb.h"
 
 /*
-    STM32F013CB (LQFP48/LQFP48) Pin Assignments:
+    STM32F103CB (LQFP48/LQFP48) Pin Assignments:
 
     Pin   Function     DIR   Electrical     Connected to
     ---   ---------    ---   -----------    ---------------------------------------
