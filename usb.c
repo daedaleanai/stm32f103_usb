@@ -19,7 +19,7 @@ static void dbg_epr(const char* msg, uint16_t epr) {
 #endif
 
 static enum usb_state_t _usb_state       = USB_UNATTACHED;
-static enum usb_state_t _usb_state_saved = USB_UNATTACHED; // when state is suspended, the state to return to on wakeup
+//static enum usb_state_t _usb_state_saved = USB_UNATTACHED; // when state is suspended, the state to return to on wakeup
 
 enum usb_state_t usb_state() { return _usb_state; }
 
@@ -169,7 +169,7 @@ size_t usb_recv(uint8_t* buf, size_t sz) {
 		return 0;
 	}
 #endif
-    
+
     if (istr & USB_ISTR_CTR) {
         uint8_t ep = usb_istr_get_ep_id();
         if (ep == 0) {
