@@ -25,9 +25,9 @@
 */
 
 enum {
-	USART1_TX_PIN = PA9,
-	USART1_RX_PIN = PA10,
-	LED0_PIN      = PC13,
+    USART1_TX_PIN = PA9,
+    USART1_RX_PIN = PA10,
+    LED0_PIN      = PC13,
 };
 
 /* clang-format off */
@@ -69,86 +69,85 @@ void          USART1_IRQ_Handler(void) { usart_irq_handler(&USART1, &usart1tx); 
 static size_t u1puts(const char* buf, size_t len) { return usart_puts(&USART1, &usart1tx, buf, len); }
 static size_t usb_puts(const char* buf, size_t len) { return usb_send(buf, len); }
 
-
 void USB_LP_CAN1_RX0_IRQ_Handler(void) {
-  uint64_t now = cycleCount();
-  led0_toggle();
-  static int i = 0;
-  cbprintf(u1puts, "%lld IRQ %i: %s\n", now/72, i++, usb_state_str(usb_state()));
-	uint8_t buf[64];
-	size_t  len = usb_recv(buf, sizeof buf);
-	if (len > 0) {
-		cbprintf(u1puts, "received %i: %*s\n", len, len, buf);
-	}
+    uint64_t now = cycleCount();
+    led0_toggle();
+    static int i = 0;
+    cbprintf(u1puts, "%lld IRQ %i: %s\n", now / 72, i++, usb_state_str(usb_state()));
+    uint8_t buf[64];
+    size_t  len = usb_recv(buf, sizeof buf);
+    if (len > 0) {
+        cbprintf(u1puts, "received %i: %*s\n", len, len, buf);
+    }
 }
 
 void TIM3_IRQ_Handler(void) {
-	if ((TIM3.SR & TIM_SR_UIF) == 0)
-		return;
-	TIM3.SR &= ~TIM_SR_UIF;
-	static int i = 0;
-  cbprintf(u1puts, "USB %i: %s\n", i, usb_state_str(usb_state()));
-	cbprintf(usb_puts, "bingo %i\n", i++);
+    if ((TIM3.SR & TIM_SR_UIF) == 0)
+        return;
+    TIM3.SR &= ~TIM_SR_UIF;
+    static int i = 0;
+    cbprintf(u1puts, "USB %i: %s\n", i, usb_state_str(usb_state()));
+    cbprintf(usb_puts, "bingo %i\n", i++);
 }
 
 int main(void) {
 
-	uint8_t rf = (RCC.CSR >> 24) & 0xfc;
-	RCC.CSR |= RCC_CSR_RMVF; // Set RMVF bit to clear the reset flags
+    uint8_t rf = (RCC.CSR >> 24) & 0xfc;
+    RCC.CSR |= RCC_CSR_RMVF; // Set RMVF bit to clear the reset flags
 
-	SysTick_Config(1U << 24); // tick at 72Mhz/2^24 = 4.2915 HZ
+    SysTick_Config(1U << 24); // tick at 72Mhz/2^24 = 4.2915 HZ
 
-	NVIC_SetPriorityGrouping(IRQ_PRIORITY_GROUPING);
-	for (int i = 0; irqprios[i].irq != None_IRQn; i++) {
-		NVIC_SetPriority(irqprios[i].irq, NVIC_EncodePriority(IRQ_PRIORITY_GROUPING, irqprios[i].group, irqprios[i].sub));
-	}
+    NVIC_SetPriorityGrouping(IRQ_PRIORITY_GROUPING);
+    for (int i = 0; irqprios[i].irq != None_IRQn; i++) {
+        NVIC_SetPriority(irqprios[i].irq, NVIC_EncodePriority(IRQ_PRIORITY_GROUPING, irqprios[i].group, irqprios[i].sub));
+    }
 
-	RCC.APB2ENR |= RCC_APB2ENR_USART1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN;
-	RCC.APB1ENR |= RCC_APB1ENR_TIM3EN | RCC_APB1ENR_USBEN;
-  delay(10); // let all clocks and peripherals start up
+    RCC.APB2ENR |= RCC_APB2ENR_USART1EN | RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN | RCC_APB2ENR_IOPCEN;
+    RCC.APB1ENR |= RCC_APB1ENR_TIM3EN | RCC_APB1ENR_USBEN;
+    delay(10); // let all clocks and peripherals start up
 
-	for (const struct gpio_config_t* p = pin_cfgs; p->pins; ++p) {
-		gpioConfig(p->pins, p->mode);
-	}
+    for (const struct gpio_config_t* p = pin_cfgs; p->pins; ++p) {
+        gpioConfig(p->pins, p->mode);
+    }
 
-	gpioLock(PAAll);
-	gpioLock(PBAll);
-	gpioLock(PCAll);
+    gpioLock(PAAll);
+    gpioLock(PBAll);
+    gpioLock(PCAll);
 
-	led0_off();
+    led0_off();
 
-	usart_init(&USART1, 921600);
+    usart_init(&USART1, 921600);
 
-	cbprintf(u1puts, "SWREV:%s\n", __REVISION__);
-	cbprintf(u1puts, "CPUID:%08lx\n", SCB.CPUID);
-	cbprintf(u1puts, "DEVID:%08lx:%08lx:%08lx\n", UNIQUE_DEVICE_ID[2], UNIQUE_DEVICE_ID[1], UNIQUE_DEVICE_ID[0]);
-	cbprintf(u1puts, "RESET:%02x%s%s%s%s%s%s\n", rf, rf & 0x80 ? " LPWR" : "", rf & 0x40 ? " WWDG" : "", rf & 0x20 ? " IWDG" : "",
-	         rf & 0x10 ? " SFT" : "", rf & 0x08 ? " POR" : "", rf & 0x04 ? " PIN" : "");
-	usart_wait(&USART1);
+    cbprintf(u1puts, "SWREV:%s\n", __REVISION__);
+    cbprintf(u1puts, "CPUID:%08lx\n", SCB.CPUID);
+    cbprintf(u1puts, "DEVID:%08lx:%08lx:%08lx\n", UNIQUE_DEVICE_ID[2], UNIQUE_DEVICE_ID[1], UNIQUE_DEVICE_ID[0]);
+    cbprintf(u1puts, "RESET:%02x%s%s%s%s%s%s\n", rf, rf & 0x80 ? " LPWR" : "", rf & 0x40 ? " WWDG" : "", rf & 0x20 ? " IWDG" : "",
+             rf & 0x10 ? " SFT" : "", rf & 0x08 ? " POR" : "", rf & 0x04 ? " PIN" : "");
+    usart_wait(&USART1);
 
-	// enable 1Hz TIM3
-	TIM3.DIER |= TIM_DIER_UIE;
-	TIM3.PSC = 7200 - 1;  // 72MHz/7200   = 10KHz
-	TIM3.ARR = 10000 - 1; // 10KHz/10000  = 1Hz
-	TIM3.CR1 |= TIM_CR1_CEN;
-	NVIC_EnableIRQ(TIM3_IRQn);
+    // enable 1Hz TIM3
+    TIM3.DIER |= TIM_DIER_UIE;
+    TIM3.PSC = 7200 - 1;  // 72MHz/7200   = 10KHz
+    TIM3.ARR = 10000 - 1; // 10KHz/10000  = 1Hz
+    TIM3.CR1 |= TIM_CR1_CEN;
+    NVIC_EnableIRQ(TIM3_IRQn);
 
-	usb_init();
+    usb_init();
 
-	cbprintf(u1puts, "USB after init: %s\n", usb_state_str(usb_state()));
+    cbprintf(u1puts, "USB after init: %s\n", usb_state_str(usb_state()));
 
-  NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
+    NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
 
-	for (;;) {
-		__enable_irq();
+    for (;;) {
+        __enable_irq();
 
-		usart_wait(&USART1);
+        usart_wait(&USART1);
 
-		__WFI(); // wait for interrupt to change the state of any of the subsystems
-		
-    __disable_irq();
+        __WFI(); // wait for interrupt to change the state of any of the subsystems
 
-	} // forever
+        __disable_irq();
 
-	return 0;
+    } // forever
+
+    return 0;
 }
