@@ -214,6 +214,59 @@ size_t usb_send(const uint8_t* buf, size_t len) {
 
 // Setup and standard request handling
 
+#if 1
+static uint8_t _deviceDescriptor[] = {
+    18,            // length of this descriptor
+    0x01,          // DEVICE Descriptor Type
+    0x00, 0x02,    // USB version 2.00
+    0,             // Device Class per interface
+    0,    0,       // subclass, protocol 0,0
+    64,            //  Max Packet Size ep0
+    0x83, 0x04,    // VendorID  = 0x0483 (STMicroelectronics)
+    0x22, 0x57,    // ProductID = 0x5722 (Bulk demo)
+    0x00, 0x02,    // Device Version 2.0
+    0,    0,    0, // Manufacturer/Product/SerialNumber strings not set
+    1,             // NumConfigurations
+};
+
+static uint8_t _configDescriptor[] = {
+    // Config 0 header
+    9,                                //  Length
+    0x02,                             //  CONFIGURATION Descriptor Type
+    9 + 9 + 7 + 7, 0,                 //  TotalLength
+    2,                                //  NumInterfaces
+    1,                                //  ConfigurationValue
+    0,                                //  Configuration string not set
+    0x80,                             //  Attributes 0x80 for historical reasons
+    50,                               //  MaxPower 100mA
+
+    // interface 0
+    9,    // Length
+    0x04, // INTERFACE Descriptor Type
+    0, 0, // Interface Number, Alternate Setting
+    2,    // Num Endpoints
+    0x0A, // InterfaceClass: USB_CLASS_DATA
+    0,    // InterfaceSubClass
+    0,    // InterfaceProtocol
+    0,    // Interface string not set
+
+    // endpoint 0x1
+    7,     //  Length
+    0x05,  //  ENDPOINT Descriptor Type
+    0x01,  //  Endpoint Address: 1-OUT
+    0x02,  //  Attributes: BULK
+    64, 0, //  MaxPacketSize
+    0,     //  Interval, ignored for BULK
+
+    // endpoint 0x81
+    7,     //  Length
+    0x05,  //  ENDPOINT Descriptor Type
+    0x81,  //  Endpoint Address 1-IN
+    0x02,  //  Attributes: BULK
+    64, 0, //  MaxPacketSize
+    0,     //  Interval, ignored for BULK
+};
+#else
 static uint8_t _deviceDescriptor[] = {
     18,            // length of this descriptor
     0x01,          // DEVICE Descriptor Type
@@ -294,6 +347,7 @@ static uint8_t _configDescriptor[] = {
     64, 0, //  MaxPacketSize
     0,     //  Interval, ignored for BULK
 };
+#endif
 
 enum {
     REQ_TYPE_TX = 1 << 7, // bit 7 direction: 1: device->host
