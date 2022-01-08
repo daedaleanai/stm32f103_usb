@@ -352,7 +352,7 @@ static int handle_set_request() {
     case REQ_SET_ADDRESS:
         // actually setting the address is handled after the ACK has been sent
         // here we just check for validity
-        return (_usb_state != USB_CONFIGURED) && (_ctrl_req.val < 127) && (_ctrl_req.idx == 0);
+        return (_usb_state != USB_CONFIGURED) && (_ctrl_req.val < 128) && (_ctrl_req.idx == 0);
 
     case REQ_SET_CONFIGURATION:
         switch (_usb_state) {
