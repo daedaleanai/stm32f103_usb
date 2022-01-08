@@ -132,16 +132,15 @@ void xfer_out_done(struct libusb_transfer* xfr) {
     switch (xfr->status) {
     case LIBUSB_TRANSFER_COMPLETED:
     case LIBUSB_TRANSFER_CANCELLED:
-    	break;
+        break;
     case LIBUSB_TRANSFER_TIMED_OUT:
-    	fprintf(stderr, "transfer OUT timeout\n");
+        fprintf(stderr, "transfer OUT timeout\n");
         break;
 
     case LIBUSB_TRANSFER_NO_DEVICE:
         crash("Device disconnected.");
     default:
         crash("Unexpected status in xfer done: %d", xfr->status);
-
     }
 
     out_xfr_pending = 0;
@@ -218,7 +217,7 @@ int main(int argc, char* argv[]) {
     device = open_device(vid, pid, busnum, devaddr, skip);
     atexit(exit_device);
 
-  	if (verbosity > 0)  {
+    if (verbosity > 0) {
         libusb_device* dev = libusb_get_device(device);
         fprintf(stderr, "Found device at bus:%d address:%d\n", libusb_get_bus_number(dev), libusb_get_device_address(dev));
     }
@@ -310,7 +309,7 @@ int main(int argc, char* argv[]) {
 
         for (;;) {
             struct timeval tv;
-            int            to = libusb_get_next_timeout(NULL , &tv); // 0 no timeout pending, 1 timeout returned (maybe zero)
+            int            to = libusb_get_next_timeout(NULL, &tv); // 0 no timeout pending, 1 timeout returned (maybe zero)
 
             FD_ZERO(&rfds);
             FD_ZERO(&wfds);
@@ -356,12 +355,10 @@ int main(int argc, char* argv[]) {
                 crash("libusb_submit_transfer (OUT): %s", libusb_error_name(status));
         }
 
-	    libusb_cancel_transfer(oxfr);
-
+        libusb_cancel_transfer(oxfr);
     }
 
-	    libusb_cancel_transfer(xfr);
-
+    libusb_cancel_transfer(xfr);
 
     return 0;
 }
