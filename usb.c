@@ -234,7 +234,7 @@ static uint8_t _configDescriptor[] = {
     9,                                //  Length
     0x02,                             //  CONFIGURATION Descriptor Type
     9 + 9 + 7 + 7, 0,                 //  TotalLength
-    2,                                //  NumInterfaces
+    1,                                //  NumInterfaces
     1,                                //  ConfigurationValue
     0,                                //  Configuration string not set
     0x80,                             //  Attributes 0x80 for historical reasons
