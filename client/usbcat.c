@@ -28,7 +28,7 @@ static void usage(void) {
     fprintf(stderr, "usage: %s [-v] [-n]  {-d vid:pid [-s n] | -p bus,dev} [-f iface] < infile > outfile\n", argv0);
     fprintf(stderr,
             "  -v           increase verbosity\n"
-            "  -n           don't read stdin\n"
+            "  -n           don't hangup if stdin closes, -nn dont read stdin at all\n"
             "  -d vid:pid   hex Vendor and Product ID\n"
             "  -s n         n'th device that matches vid:pid\n"
             "  -p bus,dev   decimal device address\n"
@@ -294,7 +294,7 @@ int main(int argc, char* argv[]) {
     if (status < 0)
         crash("libusb_submit_transfer (IN): %s", libusb_error_name(status));
 
-    if (nostdin) {
+    if (nostdin > 1) {
 
         for (;;)
             libusb_handle_events(NULL);
@@ -345,6 +345,8 @@ int main(int argc, char* argv[]) {
             int l = read(fileno(stdin), obuf, oep->wMaxPacketSize);
             if (l < 0)
                 crash("read stdin");
+            if (l == 0 && nostdin)
+                continue;
             if (l == 0)
                 break; // eof
 
